@@ -61,15 +61,23 @@ print(f"Human class IDs: {human_class_ids}")
 results = model(VIDEO_PATH, stream=True)
 
 # Iterate through the detection results frame by frame
+last_second = -1  # Track the last processed second
+
 for i, result in enumerate(results):
     current_frame_number = i + 1  # Frame number (1-indexed)
-    timestamp_seconds = current_frame_number / fps  # Calculate timestamp in seconds
-    
-    # Format the timestamp as H:M:S.ms
+    timestamp_seconds = int(current_frame_number / fps)  # Calculate timestamp in whole seconds
+
+    # Skip processing if the current second is the same as the last processed second
+    if timestamp_seconds == last_second:
+        continue
+
+    last_second = timestamp_seconds  # Update the last processed second
+
+    # Format the timestamp as H:M:S
     td = datetime.timedelta(seconds=timestamp_seconds)
     formatted_timestamp = str(td)
 
-    human_count = 0  # Initialize human count for the current frame
+    human_count = 0  # Initialize human count for the current second
     frame = result.orig_img  # Extract the original frame from the result
 
     # Check if there are any detections in the current frame
@@ -95,5 +103,5 @@ for i, result in enumerate(results):
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     
-    # Print the timestamp, frame number, and human count for the current frame
+    # Print the timestamp, frame number, and human count for the current second
     print(f"Timestamp: {formatted_timestamp} (Frame: {current_frame_number}), Humans Detected: {human_count}")
