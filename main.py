@@ -24,7 +24,7 @@ model = YOLO(MODEL_PATH)
 
 # --- Determine the class ID for 'person' or 'human' ---
 person_class_id = -1
-human_class_names_to_check = ['person', 'human'] # Common names
+human_class_names_to_check = ['person', 'human', 'man', 'women', 'child'] # Common names
 for class_id, name in model.names.items():
     if name.lower() in human_class_names_to_check:
         person_class_id = class_id
